@@ -1,0 +1,17 @@
+{
+    "name": "holtsdev/grumphp-tasks",
+    "type": "library",
+    "license": "MIT License",
+    "autoload": {
+        "psr-4": {
+            "Holtsdev\\GrumphpTasks\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "James Comeau",
+            "email": "jcomeau@hccmkt.com"
+        }
+    ],
+    "require": {}
+}
