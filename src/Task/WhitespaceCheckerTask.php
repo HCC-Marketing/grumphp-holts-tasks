@@ -42,6 +42,12 @@ class WhitespaceCheckerTask extends AbstractExternalTask
     {
         $config = $this->getConfig()->getOptions();
 
+        $files = $context->getFiles()->extensions($config['triggered_by']);
+
+        if (count($files) === 0) {
+            return TaskResult::createSkipped($this, $context);
+        }
+
         $matchedWhitespaceCommitMsg = preg_match(self::TAG_REGEX, $context->getCommitMessage());
 
         if ($matchedWhitespaceCommitMsg === false) {
@@ -50,12 +56,6 @@ class WhitespaceCheckerTask extends AbstractExternalTask
                 PHP_EOL,
                 preg_last_error_msg()
             ));
-        }
-
-        $files = $context->getFiles()->extensions($config['triggered_by']);
-
-        if (count($files) === 0) {
-            return TaskResult::createSkipped($this, $context);
         }
 
         /*

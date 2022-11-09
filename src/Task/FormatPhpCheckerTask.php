@@ -134,6 +134,12 @@ class FormatPhpCheckerTask extends AbstractExternalTask
         $fixerPath = $config['fixer_path'];
         $configPath = $config['config_path'];
 
+        $files = $context->getFiles()->extensions($config['triggered_by']);
+
+        if (count($files) === 0) {
+            return TaskResult::createSkipped($this, $context);
+        }
+
         $matchedFormatCommitMsg = preg_match(self::TAG_REGEX, $context->getCommitMessage());
 
         if ($matchedFormatCommitMsg === false) {
@@ -142,12 +148,6 @@ class FormatPhpCheckerTask extends AbstractExternalTask
                 PHP_EOL,
                 preg_last_error_msg()
             ));
-        }
-
-        $files = $context->getFiles()->extensions($config['triggered_by']);
-
-        if (count($files) === 0) {
-            return TaskResult::createSkipped($this, $context);
         }
 
         try {
