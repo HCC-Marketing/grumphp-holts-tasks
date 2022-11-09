@@ -48,8 +48,9 @@ class FormatPhpCheckerTask extends AbstractExternalTask
     {
         $arguments = $this->processBuilder->createArgumentsForCommand('git');
         $arguments->add('diff');
-        $arguments->add('--name-only');
         $arguments->add('--cached');
+        $arguments->add('--name-only');
+        $arguments->add('-z');
         $arguments->addRequiredArgument('--diff-filter=%s', 'A');
         $arguments->addFiles($files);
         
