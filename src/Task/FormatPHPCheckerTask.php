@@ -28,7 +28,7 @@ class FormatPHPCheckerTask extends AbstractExternalTask
         $resolver->setDefaults([
             'triggered_by' => ['php', 'phtml'],
             'fixer_path' => 'php-cs-fixer',
-            'config_path' => '.php_cs.dist'
+            'config_path' => '.php-cs-fixer.dist.php'
         ]);
 
         $resolver->addAllowedTypes('triggered_by', ['array']);
