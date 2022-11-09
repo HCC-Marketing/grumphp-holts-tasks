@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\Process;
 
-class FormatPHPCheckerTask extends AbstractExternalTask
+class FormatPhpCheckerTask extends AbstractExternalTask
 {
     const TAG_REGEX = "/[A-Z0-9-]+\s+\[format\]/i";
     const TAG_DISPLAY_TEXT = '[Format]';
