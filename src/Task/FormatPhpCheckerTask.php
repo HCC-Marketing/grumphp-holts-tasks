@@ -2,6 +2,7 @@
 
 namespace Holtsdev\GrumphpTasks\Task;
 
+use GrumPHP\Collection\FilesCollection;
 use GrumPHP\Runner\TaskResult;
 use GrumPHP\Runner\TaskResultInterface;
 use GrumPHP\Task\AbstractExternalTask;
@@ -42,6 +43,31 @@ class FormatPhpCheckerTask extends AbstractExternalTask
     {
         return $context instanceof GitCommitMsgContext;
     }
+
+    private function getNewlyAddedFiles(FilesCollection $files): array
+    {
+        $arguments = $this->processBuilder->createArgumentsForCommand('git');
+        $arguments->add('diff');
+        $arguments->add('--name-only');
+        $arguments->add('--cached');
+        $arguments->addRequiredArgument('--diff-filter=%s', 'A');
+        $arguments->addFiles($files);
+        
+        $process = $this->processBuilder->buildProcess($arguments);
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            throw new \RuntimeException(sprintf(
+                'Failed to identify newly added files:%s%s',
+                PHP_EOL,
+                $process->getErrorOutput()
+            ));
+        }
+        
+        $output = $this->formatter->format($process);
+        
+        return $output === '' ? [] : explode('\0', $output);
+    }
     
     private function getFixedHash(string $filePath, string $fixerPath, string $configPath): string
     {
@@ -54,7 +80,8 @@ class FormatPhpCheckerTask extends AbstractExternalTask
 
             if (!$process->isSuccessful()) {
                 throw new \RuntimeException(sprintf(
-                    'Failed to retrieve the last committed version of the file: %s',
+                    'Failed to retrieve the last committed version of the file:%s%s',
+                    PHP_EOL,
                     $process->getErrorOutput()
                 ));
             }
@@ -65,7 +92,8 @@ class FormatPhpCheckerTask extends AbstractExternalTask
 
             if (!$process->isSuccessful()) {
                 throw new \RuntimeException(sprintf(
-                    'Failed to run the fixer on the committed file: %s',
+                    'Failed to run the fixer on the committed file:%s%s',
+                    PHP_EOL,
                     $process->getErrorOutput()
                 ));
             }
@@ -87,7 +115,8 @@ class FormatPhpCheckerTask extends AbstractExternalTask
 
             if (!$process->isSuccessful()) {
                 throw new \RuntimeException(sprintf(
-                    'Failed to retrieved the staged version of the file: %s',
+                    'Failed to retrieved the staged version of the file:%s%s',
+                    PHP_EOL,
                     $process->getErrorOutput()
                 ));
             }
@@ -121,11 +150,23 @@ class FormatPhpCheckerTask extends AbstractExternalTask
         }
 
         try {
+            if ($matchedFormatCommitMsg) {
+                $newFiles = $this->getNewlyAddedFiles($files);
+                
+                if (count($newFiles) > 0) {
+                    return TaskResult::createFailed($this, $context, sprintf(
+                        'The commit is marked as formatting-only, but some staged files are new to the repository:%s%s',
+                        PHP_EOL,
+                        implode(PHP_EOL, $newFiles)
+                    ));
+                }
+            }
+            
             $filesWithNonWhitespaceChanges = [];
             $filesWithOnlyFormattingChanges = [];
             
             foreach ($files as $file) {
-                $path = $file->getRealPath();
+                $path = $file->getPathname();
                 
                 $stagedHash = $this->getStagedHash($path);
                 $fixedHash = $this->getFixedHash($path, $fixerPath, $configPath);
@@ -164,7 +205,7 @@ class FormatPhpCheckerTask extends AbstractExternalTask
                 ));
             }
         }
-
+        
         return TaskResult::createPassed($this, $context);
     }
 }
