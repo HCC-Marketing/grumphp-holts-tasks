@@ -101,8 +101,8 @@ class FormatPhpCheckerTask extends AbstractExternalTask
     public function run(ContextInterface $context): TaskResultInterface
     {
         $config = $this->getConfig()->getOptions();
-        $fixerPath = $options['fixer_path'];
-        $configPath = $options['config_path'];
+        $fixerPath = $config['fixer_path'];
+        $configPath = $config['config_path'];
 
         $matchedFormatCommitMsg = preg_match(self::TAG_REGEX, $context->getCommitMessage());
 
