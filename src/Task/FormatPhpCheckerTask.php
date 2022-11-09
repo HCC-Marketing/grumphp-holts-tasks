@@ -125,6 +125,8 @@ class FormatPhpCheckerTask extends AbstractExternalTask
             $filesWithOnlyFormattingChanges = [];
             
             foreach ($files as $file) {
+                $path = $file->getRealPath();
+                
                 $stagedHash = $this->getStagedHash($path);
                 $fixedHash = $this->getFixedHash($path, $fixerPath, $configPath);
 
