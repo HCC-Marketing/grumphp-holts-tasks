@@ -67,7 +67,7 @@ class FormatPhpCheckerTask extends AbstractExternalTask
         
         $output = $this->formatter->format($process);
         
-        return $output === '' ? [] : explode('\0', $output);
+        return $output === '' ? [] : explode("\0", $output);
     }
     
     private function getFixedHash(string $filePath, string $fixerPath, string $configPath): string
