@@ -1,5 +1,5 @@
 {
-    "name": "holtsdev/grumphp-tasks",
+    "name": "holtsdev/holts-grumphp-tasks",
     "type": "library",
     "license": "MIT License",
     "autoload": {
