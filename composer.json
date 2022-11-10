@@ -11,6 +11,10 @@
         {
             "name": "James Comeau",
             "email": "jcomeau@hccmkt.com"
+        },
+        {
+            "name": "Zach Stein",
+            "email": "zstein@hccmkt.com"
         }
     ],
     "require": {}
