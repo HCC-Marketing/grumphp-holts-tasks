@@ -151,24 +151,26 @@ class FormatPhpCheckerTask extends AbstractExternalTask
         }
 
         try {
-            if ($matchedFormatCommitMsg) {
-                $newFiles = $this->getNewlyAddedFiles($files);
-                
-                if (count($newFiles) > 0) {
-                    return TaskResult::createFailed($this, $context, sprintf(
-                        'The commit is marked as formatting-only, but some staged files are new to the repository:%s%s',
-                        PHP_EOL,
-                        implode(PHP_EOL, $newFiles)
-                    ));
-                }
+            $newFiles = $this->getNewlyAddedFiles($files);
+            
+            if ($matchedFormatCommitMsg && count($newFiles) > 0) {
+                return TaskResult::createFailed($this, $context, sprintf(
+                    'The commit is marked as formatting-only, but some staged files are new to the repository:%s%s',
+                    PHP_EOL,
+                    implode(PHP_EOL, $newFiles)
+                ));
             }
             
-            $filesWithNonWhitespaceChanges = [];
+            $pathNames = $files->map(function (SplFileInfo $file) {
+                return $file->getPathname();
+            }, $files)->toArray();
+            
+            $existingFiles = array_diff($pathNames, $newFiles);
+            
+            $filesWithNonFormattingChanges = $newFiles;
             $filesWithOnlyFormattingChanges = [];
             
-            foreach ($files as $file) {
-                $path = $file->getPathname();
-                
+            foreach ($existingFiles as $path) {
                 $stagedHash = $this->getStagedHash($path);
                 $fixedHash = $this->getFixedHash($path, $fixerPath, $configPath);
 
