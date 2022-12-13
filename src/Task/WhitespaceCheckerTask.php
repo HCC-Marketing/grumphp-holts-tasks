@@ -78,6 +78,7 @@ class WhitespaceCheckerTask extends AbstractExternalTask
         $arguments->add('--cached');
         $arguments->add('--numstat');
         $arguments->add('--ignore-all-space');
+        $arguments->add('--ignore-blank-lines');
         $arguments->add('-z');
         $arguments->addFiles($files);
 
