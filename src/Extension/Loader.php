@@ -15,9 +15,9 @@ class Loader implements ExtensionInterface
             ->addArgument(new Reference('formatter.raw_process'))
             ->addTag('grumphp.task', ['task' => 'holtsdev_whitespace_checker']);
             
-        $container->register('task.holtsdev_format_php_checker', \Holtsdev\GrumphpTasks\Task\FormatPhpCheckerTask::class)
+        $container->register('task.holtsdev_formatting_checker', \Holtsdev\GrumphpTasks\Task\FormattingCheckerTask::class)
             ->addArgument(new Reference('process_builder'))
             ->addArgument(new Reference('formatter.raw_process'))
-            ->addTag('grumphp.task', ['task' => 'holtsdev_format_php_checker']);
+            ->addTag('grumphp.task', ['task' => 'holtsdev_formatting_checker']);
     }
 }
